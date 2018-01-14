@@ -1,0 +1,44 @@
+# For full config options, check the docs:
+#    docs.serverless.com
+#
+# Happy Coding!
+
+service: atm-locator
+provider:
+  name: aws
+  runtime: nodejs6.10
+# runtime: nodejs8.19
+  stage: dev
+  region: us-east-1
+  role: <ARN of Lambda role goes here, provides the program access to lambda services>
+
+functions:
+  firstRun:
+    handler: handler.run
+
+  findGeoCode:
+    handler: handler.findGeoCode
+
+  pushToAlgolia:
+    handler: handler.pushToAlgolia
+
+  locationFailed:
+    handler: handler.locationFailed
+
+  processUpdates:
+    handler: handler.processUpdates
+    events:
+      - stream: <ARN of DynamoDB Stream goes here>
+        batchSize: 1
+        startPosition: LATEST
+        enabled: true
+  findLocations:
+    handler: handler.findLocations
+    events:
+      - http:
+          cors: true
+          path: locations
+          method: get
+          private: false
+
+
